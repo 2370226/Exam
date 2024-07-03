@@ -68,12 +68,12 @@ if (userIsNotNull){
 							<ul>
 								<li>
 									<!-- 成績登録 -->
-									<a href="#">成績登録</a>
+									<a href="TestRegist.action">成績登録</a>
 									<!-- /成績登録 -->
 								</li>
 								<li>
 									<!-- 成績参照 -->
-									<a href="#">成績参照</a>
+									<a href="TestList.action">成績参照</a>
 									<!-- /成績参照 -->
 								</li>
 							</ul>

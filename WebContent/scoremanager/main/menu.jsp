@@ -19,12 +19,12 @@
 				</div>
 				<!-- 成績登録リンク -->
 				<div>
-					<a href="#">成績登録</a>
+					<a href="TestRegist.action">成績登録</a>
 				</div>
 				<!-- /成績登録リンク -->
 				<!-- 成績参照リンク -->
 				<div>
-					<a href="#">成績参照</a>
+					<a href="TestList.action">成績参照</a>
 				</div>
 				<!-- /成績参照リンク -->
 			</div>
