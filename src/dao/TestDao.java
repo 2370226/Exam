@@ -10,16 +10,25 @@ import java.util.Objects;
 
 import bean.School;
 import bean.Student;
+import bean.Subject;
+import bean.Test;
 
-public class StudentDao extends Dao {
+public class TestDao extends Dao {
 	/*
 	 * baseSql:データ取得用のSQL
 	 */
-	private String baseSql = "select * from student where school_cd = ?";
+	private String baseSql = "select * from test where school_cd = ?";
 	/*
 	 * get:primary key(no)を用いたstudentテーブルの検索
 	 */
-	public Student get(String no) throws Exception {
+	public Test get(
+			Student student,
+			Subject subject,
+			School school,
+			int no) throws Exception {
+		System.out.println("入力学校情報:");
+		String schoolCd = school.getCd();
+		school.getName();
 		System.out.println("入力学生番号:'"+no+"'");
 		// student:検索結果
 		Student student = new Student();
@@ -242,9 +251,6 @@ public class StudentDao extends Dao {
 			School school,
 			boolean isAttend
 		) throws Exception {
-		System.out.println("入力学校情報:");
-		String schoolCd = school.getCd();
-		school.getName();
 		// list:検索結果
 		List<Student> list = new ArrayList<>();
 		// データベースと接続
@@ -262,10 +268,11 @@ public class StudentDao extends Dao {
 			// SQL文を準備
 			String sql = baseSql + conditionIsAttend + order;
 			statement = connection.prepareStatement(sql);
-			statement.setString(1, schoolCd);
+			String cd = school.getCd();
+			statement.setString(1, cd);
 			StringBuilder printSql = new StringBuilder();
 			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", schoolCd));
+			printSql.append(sql.replaceFirst("\\?", cd));
 			printSql.append("'");
 			System.out.println(printSql);
 			// 検索結果を格納
