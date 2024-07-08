@@ -83,9 +83,11 @@ public class Test implements Serializable {
 	 */
 	private int point;
 	public int getPoint() {
+		System.out.println("取得得点:'"+this.point+"'");
 		return this.point;
 	}
 	public void setPoint(int point) {
+		System.out.println("設定得点:'"+this.point+"'");
 		this.point = point;
 	}
 	/*
