@@ -88,15 +88,15 @@
 				<!-- 検索ボタン -->
 				<button>検索</button>
 				<!-- /検索ボタン -->
-				<div>
-					${errors.get("f1")}
-				</div>
 			</form>
-			<c:choose>
-				<c:if test="${tests.size() > 0}">
-					<!-- 科目 -->
-					<div>科目：${subject.cd}（${no}回）</div>
-					<!-- /科目 -->
+			<div>
+				${errors.get("f1")}
+			</div>
+			<c:if test="${tests.size() > 0}">
+				<!-- 科目 -->
+				<div>科目：${f3}（${f4}回）</div>
+				<!-- /科目 -->
+				<form action="" method="post">
 					<!-- 成績一覧テーブル -->
 					<table>
 						<tr>
@@ -112,54 +112,53 @@
 							<!-- 氏名（ヘッダー） -->
 							<th>氏名</th>
 							<!-- /氏名（ヘッダー） -->
-							<!-- 点数 -->
+							<!-- 点数（ヘッダー） -->
 							<th>点数</th>
-							<!-- /点数 -->
+							<!-- /点数（ヘッダー） -->
 						</tr>
 						<c:forEach items="${tests}" var="test">
 							<tr>
-								<!-- 入学年度（学生情報） -->
-								<td>${student.entYear}</td>
-								<!-- /入学年度（学生情報） -->
-								<!-- 学生番号（学生情報） -->
-								<td>${student.no}</td>
-								<!-- /学生番号（学生情報） -->
-								<!-- 氏名（学生情報） -->
-								<td>${student.name}</td>
-								<!-- /氏名（学生情報） -->
-								<!-- クラス（学生情報） -->
-								<td>${student.classNum}</td>
-								<!-- /クラス（学生情報） -->
-								<!-- 在学中（学生情報） -->
+								<!-- 入学年度（成績情報） -->
 								<td>
-									<c:choose>
-										<c:when test="${student.isAttend()}">
-											○
-										</c:when>
-										<c:otherwise>
-											×
-										</c:otherwise>
-									</c:choose>
+									${f1}
 								</td>
-								<!-- /在学中（学生情報） -->
-								<!-- 学生情報変更リンク -->
+								<!-- /入学年度（成績情報） -->
+								<!-- クラス（成績情報） -->
 								<td>
-									<!--
-									仕様書ではaタグの指定であったが、
-									想定通りの動作にならないため、formタグを用いている
-									-->
-									<form action="StudentUpdate.action">
-										<input type="hidden" name="student_no" value="${student.no}">
-										<button>変更</button>
-									</form>
+									${f2}
 								</td>
-								<!-- /学生情報変更リンク -->
+								<!-- /クラス（成績情報） -->
+								<!-- 学生番号（成績情報） -->
+								<td>
+									${test.student.no}
+								</td>
+								<!-- /学生番号（成績情報） -->
+								<!-- 氏名（成績情報） -->
+								<td>
+									${test.student.name}
+								</td>
+								<!-- /氏名（成績情報） -->
+								<!-- 点数（成績情報） -->
+								<td>
+									<input
+										type="text"
+										name="point_${test.student.no}"
+										value="${test.point}"
+									>
+									<div>
+										${errors.get("f2")}
+									</div>
+								</td>
+								<!-- /点数（成績情報） -->
 							</tr>
 						</c:forEach>
 					</table>
 					<!-- /成績一覧テーブル -->
-				</c:if>
-			</c:choose>
+					<input
+						type="button"
+					>
+				</form>
+			</c:if>
 		</section>
 	</c:param>
 </c:import>

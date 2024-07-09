@@ -29,7 +29,7 @@ public class Test implements Serializable {
 		this.student.getSchool();
 	}
 	/*
-	 * subject_no:科目コード
+	 * subject_cd:科目コード
 	 * char(3), primary key, not null
 	 */
 	private Subject subject;

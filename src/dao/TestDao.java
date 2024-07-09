@@ -17,7 +17,7 @@ public class TestDao extends Dao {
 	/*
 	 * baseSql:データ取得用のSQL
 	 */
-	private String baseSql = "select * from test where school_cd = ?";
+//	private String baseSql = "select * from test where subject_cd = ? and school_cd = ?";
 	/*
 	 * get:primary key(no)を用いたstudentテーブルの検索
 	 */
@@ -26,50 +26,82 @@ public class TestDao extends Dao {
 			Subject subject,
 			School school,
 			int no) throws Exception {
+		System.out.println("取得学生情報:");
+		String studentNo = student.getNo();
+		student.getName();
+		student.getEntYear();
+		student.getClassNum();
+		student.isAttend();
+		student.getSchool();
+		System.out.println("入力科目情報:");
+		subject.getSchool();
+		String subjectCd = subject.getCd();
+		subject.getName();
 		System.out.println("入力学校情報:");
 		String schoolCd = school.getCd();
 		school.getName();
-		System.out.println("入力学生番号:'"+no+"'");
-		// student:検索結果
-		Student student = new Student();
+		System.out.println("入力試験回数:'"+no+"'");
+		// test:検索結果
+		Test test = new Test();
 		// データベースと接続
 		Connection connection = getConnection();
 		// SQL文を準備
 		PreparedStatement statement = null;
 		try {
 			// データベースを検索
-			String sql = "select * from student where no = ?";
+			String sql = "select * from test"
+					+ " where student_no = ? and subject_cd = ? and school_cd = ? and no = ?"
+					+ " order by student_no, subject_cd, school_cd, no";
 			statement = connection.prepareStatement(sql);
-			statement.setString(1, no);
+			statement.setString(1, studentNo);
+			statement.setString(2, subjectCd);
+			statement.setString(3, schoolCd);
+			statement.setInt(4, no);
 			StringBuilder printSql = new StringBuilder();
 			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", no));
+			printSql.append(sql.replaceFirst("\\?", subjectCd)
+					.replaceFirst("\\?", schoolCd)
+					.replaceFirst("\\?", studentNo)
+					.replaceFirst("\\?", String.valueOf(no)));
 			printSql.append("'");
 			System.out.println(printSql);
 			// 検索結果を格納
 			ResultSet rSet = statement.executeQuery();
 			if (rSet.next()) {
-				// 学生番号
-				student.setNo(no);
-				// 学生名
-				String name = rSet.getString("name");
-				student.setName(name);
-				// 入学年度
-				int entYear = rSet.getInt("ent_year");
-				student.setEntYear(entYear);
-				// クラス番号
+				/*
+				 * student_no:学生番号
+				 * varchar(10), primary key, not null
+				 */
+				test.setStudent(student);
+				/*
+				 * subject_cd:科目コード
+				 * char(3), primary key, not null
+				 */
+				test.setSubject(subject);
+				/*
+				 * school_cd:学校コード
+				 * char(3), primary key, not null
+				 */
+				test.setSchool(school);
+				/*
+				 * no:回数
+				 * integer(10), primary key, not null
+				 */
+				test.setNo(no);
+				/*
+				 * point:得点
+				 * intger(10), value = null
+				 */
+				int point = rSet.getInt("point");
+				test.setPoint(point);
+				/*
+				 * class_num:クラス番号
+				 * varchar(5), value = null
+				 */
 				String classNum = rSet.getString("class_num");
-				student.setClassNum(classNum);
-				// 在学中フラグ
-				boolean isAttend = rSet.getBoolean("is_attend");
-				student.setAttend(isAttend);
-				// 所属学校(学校コードから検索)
-				String cd = rSet.getString("School_cd");
-				SchoolDao dao = new SchoolDao();
-				School school = dao.get(cd);
-				student.setSchool(school);
+				test.setClassNum(classNum);
 			} else {
-				student = null;
+				test = null;
 			}
 		} catch (Exception e) {
 			 throw e;
@@ -89,212 +121,127 @@ public class TestDao extends Dao {
 				}
 			}
 		}
-		return student;
+		return test;
 	}
 	/*
 	 * postFilter:フィルター後のリストへの格納処理
 	 */
-	private List<Student> postFilter(
-		ResultSet rSet,
-		School school
-	) throws Exception {
-		// list:格納リスト
-		List<Student> list = new ArrayList<>();
-		try {
-			while (rSet.next()) {
-				Student student = new Student();
-				// 学生番号
-				String no = rSet.getString("no");
-				student.setNo(no);
-				// 学生名
-				String name = rSet.getString("name");
-				student.setName(name);
-				// 入学年度
-				int entYear = rSet.getInt("ent_year");
-				student.setEntYear(entYear);
-				// クラス番号
-				String classNum = rSet.getString("class_num");
-				student.setClassNum(classNum);
-				// 在学中フラグ
-				boolean isAttend = rSet.getBoolean("is_attend");
-				student.setAttend(isAttend);
-				// 所属学校
-				student.setSchool(school);
-				list.add(student);
-			}
-		} catch (Exception e) {
-			 e.printStackTrace();
-		}
-		return list;
-	}
+//	private List<Test> postFilter(
+//		ResultSet rSet,
+//		School school
+//	) throws Exception {
+//		// list:格納リスト
+//		List<Test> list = new ArrayList<>();
+//		try {
+//			while (rSet.next()) {
+//				Test test = new Test();
+//				/*
+//				 * student_no:学生番号
+//				 * varchar(10), primary key, not null
+//				 */
+//				StudentDao studentDao = new StudentDao();
+//				String studentNo = rSet.getString("student_no");
+//				Student student = studentDao.get(studentNo);
+//				test.setStudent(student);
+//				/*
+//				 * subject_cd:科目コード
+//				 * char(3), primary key, not null
+//				 */
+//				SubjectDao subjectDao = new SubjectDao();
+//				String cd = rSet.getString("subject_cd");
+//				Subject subject = subjectDao.get(cd, school);
+//				test.setSubject(subject);
+//				/*
+//				 * school_cd:学校コード
+//				 * char(3), primary key, not null
+//				 */
+//				test.setSchool(school);
+//				/*
+//				 * no:回数
+//				 * integer(10), primary key, not null
+//				 */
+//				int no = rSet.getInt("no");
+//				test.setNo(no);
+//				/*
+//				 * point:得点
+//				 * intger(10), value = null
+//				 */
+//				int point = rSet.getInt("point");
+//				test.setPoint(point);
+//				/*
+//				 * class_num:クラス番号
+//				 * varchar(5), value = null
+//				 */
+//				String classNum = rSet.getString("class_num");
+//				test.setClassNum(classNum);
+//				list.add(test);
+//			}
+//		} catch (Exception e) {
+//			 e.printStackTrace();
+//		}
+//		return list;
+//	}
 	/*
-	 * filter:学校、入学年度、クラス番号、在学フラグを指定して学生一覧を取得
+	 * filter:入学年度、クラス番号、強化、試験回数、学校を指定して学生一覧を取得
 	 */
-	public List<Student> filter(
-		School school,
-		int entYear,
-		String classNum,
-		boolean isAttend
-	) throws Exception {
-		// list:検索結果
-		List<Student> list = new ArrayList<>();
-		// データベースと接続
-		Connection connection = getConnection();
-		// SQL文を準備
-		PreparedStatement statement = null;
-		String condition = " and ent_year = ? and class_num = ?";
-		String conditionIsAttend = "";
-		if (isAttend) {
-			conditionIsAttend = " and is_attend = true";
-		}
-		String order = " order by no";
-		// rSet:検索結果
-		ResultSet rSet;
-		try {
-			// SQL文を準備
-			String sql = baseSql + condition + conditionIsAttend + order;
-			statement = connection.prepareStatement(sql);
-			String cd = school.getCd();
-			statement.setString(1, cd);
-			statement.setInt(2, entYear);
-			statement.setString(3, classNum);
-			StringBuilder printSql = new StringBuilder();
-			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", cd)
-					.replaceFirst("\\?", String.valueOf(entYear)).replaceFirst("\\?", classNum));
-			printSql.append("'");
-			System.out.println(printSql);
-			// 検索結果を格納
-			rSet = statement.executeQuery();
-			list = postFilter(rSet, school);
-		} catch (Exception e) {
-			 throw e;
-		} finally {
-			if (Objects.nonNull(statement)) {
-				try {
-					statement.close();
-				} catch (SQLException sqlException) {
-					 throw sqlException;
-				}
-			}
-			if (Objects.nonNull(connection)) {
-				try {
-					connection.close();
-				} catch (SQLException sqlException) {
-					 throw sqlException;
-				}
-			}
-		}
-		return list;
-	}
-	/*
-	 * filter:学校、入学年度、在学フラグを指定して学生一覧を取得
-	 */
-	public List<Student> filter(
-			School school,
+	public List<Test> filter(
 			int entYear,
-			boolean isAttend
-		) throws Exception {
+			String classNum,
+			Subject subject,
+			int no,
+			School school
+	) throws Exception {
+		System.out.println("入力入学年度:'"+entYear+"'");
+		System.out.println("入力クラス番号:'"+classNum+"'");
+		System.out.println("入力科目情報:");
+		subject.getSchool();
+		subject.getCd();
+		subject.getName();
+		System.out.println("入力試験回数:'"+no+"'");
+		System.out.println("入力学校情報:");
+		school.getCd();
+		school.getName();
 		// list:検索結果
-		List<Student> list = new ArrayList<>();
-		// データベースと接続
-		Connection connection = getConnection();
-		// SQL文を準備
-		PreparedStatement statement = null;
-		String condition = " and ent_year = ?";
-		String conditionIsAttend = "";
-		if (isAttend) {
-			conditionIsAttend = " and is_attend = true";
-		}
-		String order = " order by no";
-		// rSet:検索結果
-		ResultSet rSet;
-		try {
-			// SQL文を準備
-			String sql = baseSql + condition + conditionIsAttend + order;
-			statement = connection.prepareStatement(sql);
-			String cd = school.getCd();
-			statement.setString(1, cd);
-			statement.setInt(2, entYear);
-			StringBuilder printSql = new StringBuilder();
-			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", cd).replaceFirst("\\?", String.valueOf(entYear)));
-			printSql.append("'");
-			System.out.println(printSql);
-			// 検索結果を格納
-			rSet = statement.executeQuery();
-			list = postFilter(rSet, school);
-		} catch (Exception e) {
-			 throw e;
-		} finally {
-			if (Objects.nonNull(statement)) {
-				try {
-					statement.close();
-				} catch (SQLException sqlException) {
-					 throw sqlException;
-				}
+		List<Test> list = new ArrayList<>();
+		//
+		StudentDao studentDao = new StudentDao();
+		List<Student> students = studentDao.filter(school, entYear, classNum, true);
+		for (Student student : students) {
+			Test test = new Test();
+			/*
+			 * student_no:学生番号
+			 * varchar(10), primary key, not null
+			 */
+			test.setStudent(student);
+			/*
+			 * subject_cd:科目コード
+			 * char(3), primary key, not null
+			 */
+			test.setSubject(subject);
+			/*
+			 * school_cd:学校コード
+			 * char(3), primary key, not null
+			 */
+			test.setSchool(school);
+			/*
+			 * no:回数
+			 * integer(10), primary key, not null
+			 */
+			test.setNo(no);
+			/*
+			 * point:得点
+			 * intger(10), value = null
+			 */
+			Test old = this.get(student, subject, school, no);
+			if (Objects.nonNull(old)) {
+				int point = old.getPoint();
+				test.setPoint(point);
 			}
-			if (Objects.nonNull(connection)) {
-				try {
-					connection.close();
-				} catch (SQLException sqlException) {
-					 throw sqlException;
-				}
-			}
-		}
-		return list;
-	}
-	/*
-	 * filter:学校、在学フラグを指定して学生一覧を取得
-	 */
-	public List<Student> filter(
-			School school,
-			boolean isAttend
-		) throws Exception {
-		// list:検索結果
-		List<Student> list = new ArrayList<>();
-		// データベースと接続
-		Connection connection = getConnection();
-		// SQL文を準備
-		PreparedStatement statement = null;
-		String conditionIsAttend = "";
-		if (isAttend) {
-			conditionIsAttend = " and is_attend = true";
-		}
-		String order = " order by no";
-		// rSet:検索結果
-		ResultSet rSet;
-		try {
-			// SQL文を準備
-			String sql = baseSql + conditionIsAttend + order;
-			statement = connection.prepareStatement(sql);
-			String cd = school.getCd();
-			statement.setString(1, cd);
-			StringBuilder printSql = new StringBuilder();
-			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", cd));
-			printSql.append("'");
-			System.out.println(printSql);
-			// 検索結果を格納
-			rSet = statement.executeQuery();
-			list = postFilter(rSet, school);
-		} catch (Exception e) {
-			 throw e;
-		} finally {
-			if (Objects.nonNull(statement)) {
-				try {
-					statement.close();
-				} catch (SQLException sqlException) {
-					 throw sqlException;
-				}
-			}
-			if (Objects.nonNull(connection)) {
-				try {
-					connection.close();
-				} catch (SQLException sqlException) {
-					 throw sqlException;
-				}
-			}
+			/*
+			 * class_num:クラス番号
+			 * varchar(5), value = null
+			 */
+			test.setClassNum(classNum);
 		}
 		return list;
 	}
@@ -302,70 +249,108 @@ public class TestDao extends Dao {
 	 * save:データベースに学生情報を追加
 	 * 学生情報が存在する場合は更新
 	 */
-	public boolean save(Student student) throws Exception {
+	public boolean save(List<Test> list) throws Exception {
 		// データベースと接続
 		Connection connection = getConnection();
+		int count = 0;
+		try {
+			for (Test test : list) {
+				boolean saveResult = this.save(test, connection);
+				if (saveResult) {
+					count++;
+				}
+			}
+		} catch (Exception e) {
+			 throw e;
+		} finally {
+			if (Objects.nonNull(connection)) {
+				try {
+					connection.close();
+				} catch (SQLException sqlException) {
+					 throw sqlException;
+				}
+			}
+		}
+		return count > 0;
+	}
+	private boolean save(Test test, Connection connection) throws Exception {
 		// SQL文を準備
 		PreparedStatement statement = null;
 		int count = 0;
 		try {
-			// 学生番号
-			String no = student.getNo();
-			// 学生名
-			String name = student.getName();
-			// 入学年度
-			int entYear = student.getEntYear();
-			// クラス番号
-			String classNum = student.getClassNum();
-			// 在学中フラグ
-			boolean isAttend = student.isAttend();
-			// 学校コード
-			String schoolCd = student.getSchool().getCd();
+			/*
+			 * student_no:学生番号
+			 * varchar(10), primary key, not null
+			 */
+			Student student = test.getStudent();
+			String studentNo = student.getNo();
+			/*
+			 * subject_cd:科目コード
+			 * char(3), primary key, not null
+			 */
+			Subject subject = test.getSubject();
+			String subjectCd = subject.getCd();
+			/*
+			 * school_cd:学校コード
+			 * char(3), primary key, not null
+			 */
+			School school = test.getSchool();
+			String schoolCd = school.getCd();
+			/*
+			 * no:回数
+			 * integer(10), primary key, not null
+			 */
+			int no = test.getNo();
+			/*
+			 * point:得点
+			 * intger(10), value = null
+			 */
+			int point = test.getPoint();
+			/*
+			 * class_num:クラス番号
+			 * varchar(5), value = null
+			 */
+			String classNum = test.getClassNum();
 			// old:旧学生データ
-			Student old = this.get(no);
+			Test old = this.get(student, subject, school, no);
 			String sql;
 			if (Objects.isNull(old)) {
 				// 学生データが存在しない時、情報追加SQLを作成
-				sql = "insert into student(no, name, ent_year, class_num, is_attend, school_cd) values(?, ?, ?, ?, ?, ?)";
+				sql = "insert into test"
+						+ "(student_no, subject_cd, school_cd, no, point, class_num)"
+						+ " values(?, ?, ?, ?, ?, ?)";
 				statement = connection.prepareStatement(sql);
-				// 学生番号
-				statement.setString(1, no);
-				// 学生名
-				statement.setString(2, name);
-				// 入学年度
-				statement.setInt(3, entYear);
-				// クラス番号
-				statement.setString(4, classNum);
-				// 在学中フラグ
-				statement.setBoolean(5, isAttend);
-				// 学校コード
-				statement.setString(6, schoolCd);
+				statement.setString(1, studentNo);
+				statement.setString(2, subjectCd);
+				statement.setString(3, schoolCd);
+				statement.setInt(4, no);
+				statement.setInt(5, point);
+				statement.setString(6, classNum);
 				StringBuilder printSql = new StringBuilder();
 				printSql.append("追加用SQL文:'");
-				printSql.append(sql.replaceFirst("\\?", no).replaceFirst("\\?", name)
-						.replaceFirst("\\?", String.valueOf(entYear)).replaceFirst("\\?", classNum)
-						.replaceFirst("\\?", String.valueOf(isAttend)).replaceFirst("\\?", schoolCd));
+				printSql.append(sql.replaceFirst("\\?", studentNo)
+						.replaceFirst("\\?", subjectCd)
+						.replaceFirst("\\?", schoolCd)
+						.replaceFirst("\\?", String.valueOf(no))
+						.replaceFirst("\\?", String.valueOf(point))
+						.replaceFirst("\\?", classNum));
 				printSql.append("'");
 				System.out.println(printSql);
 			} else {
 				// 学生データが存在する時、情報更新SQLを作成
-				sql = "update student set name = ?, ent_year = ?, class_num = ?, is_attend = ? where no = ?";
+				sql = "update test set point = ?"
+						+ " where student_no = ? and subject_cd = ? and school_cd = ?";
 				statement = connection.prepareStatement(sql);
-				// 学生名
-				statement.setString(1, name);
-				// 入学年度
-				statement.setInt(2, entYear);
-				// クラス番号
-				statement.setString(3, classNum);
-				// 在学中フラグ
-				statement.setBoolean(4, isAttend);
-				// 学生番号
-				statement.setString(5, no);
+				statement.setInt(1, point);
+				statement.setString(2, studentNo);
+				statement.setString(3, subjectCd);
+				statement.setString(4, schoolCd);
 				StringBuilder printSql = new StringBuilder();
 				printSql.append("更新用SQL文:'");
-				printSql.append(sql.replaceFirst("\\?", name)
-						.replaceFirst("\\?", String.valueOf(entYear)).replaceFirst("\\?", classNum)
-						.replaceFirst("\\?", String.valueOf(isAttend)).replaceFirst("\\?", no));
+				printSql.append(sql.replaceFirst("\\?", String.valueOf(no))
+						.replaceFirst("\\?", studentNo)
+						.replaceFirst("\\?", subjectCd)
+						.replaceFirst("\\?", schoolCd));
 				printSql.append("'");
 				System.out.println(printSql);
 			}
@@ -381,14 +366,13 @@ public class TestDao extends Dao {
 					 throw sqlException;
 				}
 			}
-			if (Objects.nonNull(connection)) {
-				try {
-					connection.close();
-				} catch (SQLException sqlException) {
-					 throw sqlException;
-				}
-			}
 		}
 		return count > 0;
+	}
+	public boolean delete(List<Test> list) throws Exception{
+		return true;
+	}
+	private boolean delete(Test test, Connection connection) throws Exception{
+		return true;
 	}
 }
