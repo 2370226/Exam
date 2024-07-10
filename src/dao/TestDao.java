@@ -26,7 +26,7 @@ public class TestDao extends Dao {
 			Subject subject,
 			School school,
 			int no) throws Exception {
-		System.out.println("取得学生情報:");
+		System.out.println("入力学生情報:");
 		String studentNo = student.getNo();
 		student.getName();
 		student.getEntYear();
@@ -50,8 +50,7 @@ public class TestDao extends Dao {
 		try {
 			// データベースを検索
 			String sql = "select * from test"
-					+ " where student_no = ? and subject_cd = ? and school_cd = ? and no = ?"
-					+ " order by student_no, subject_cd, school_cd, no";
+					+ " where student_no = ? and subject_cd = ? and school_cd = ? and no = ?";
 			statement = connection.prepareStatement(sql);
 			statement.setString(1, studentNo);
 			statement.setString(2, subjectCd);
@@ -59,9 +58,10 @@ public class TestDao extends Dao {
 			statement.setInt(4, no);
 			StringBuilder printSql = new StringBuilder();
 			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", subjectCd)
-					.replaceFirst("\\?", schoolCd)
+			printSql.append(sql
 					.replaceFirst("\\?", studentNo)
+					.replaceFirst("\\?", subjectCd)
+					.replaceFirst("\\?", schoolCd)
 					.replaceFirst("\\?", String.valueOf(no)));
 			printSql.append("'");
 			System.out.println(printSql);
@@ -126,61 +126,61 @@ public class TestDao extends Dao {
 	/*
 	 * postFilter:フィルター後のリストへの格納処理
 	 */
-//	private List<Test> postFilter(
-//		ResultSet rSet,
-//		School school
-//	) throws Exception {
-//		// list:格納リスト
-//		List<Test> list = new ArrayList<>();
-//		try {
-//			while (rSet.next()) {
-//				Test test = new Test();
-//				/*
-//				 * student_no:学生番号
-//				 * varchar(10), primary key, not null
-//				 */
-//				StudentDao studentDao = new StudentDao();
-//				String studentNo = rSet.getString("student_no");
-//				Student student = studentDao.get(studentNo);
-//				test.setStudent(student);
-//				/*
-//				 * subject_cd:科目コード
-//				 * char(3), primary key, not null
-//				 */
-//				SubjectDao subjectDao = new SubjectDao();
-//				String cd = rSet.getString("subject_cd");
-//				Subject subject = subjectDao.get(cd, school);
-//				test.setSubject(subject);
-//				/*
-//				 * school_cd:学校コード
-//				 * char(3), primary key, not null
-//				 */
-//				test.setSchool(school);
-//				/*
-//				 * no:回数
-//				 * integer(10), primary key, not null
-//				 */
-//				int no = rSet.getInt("no");
-//				test.setNo(no);
-//				/*
-//				 * point:得点
-//				 * intger(10), value = null
-//				 */
-//				int point = rSet.getInt("point");
-//				test.setPoint(point);
-//				/*
-//				 * class_num:クラス番号
-//				 * varchar(5), value = null
-//				 */
-//				String classNum = rSet.getString("class_num");
-//				test.setClassNum(classNum);
-//				list.add(test);
-//			}
-//		} catch (Exception e) {
-//			 e.printStackTrace();
-//		}
-//		return list;
-//	}
+	private List<Test> postFilter(
+		ResultSet rSet,
+		School school
+	) throws Exception {
+		// list:格納リスト
+		List<Test> list = new ArrayList<>();
+		try {
+			while (rSet.next()) {
+				Test test = new Test();
+				/*
+				 * student_no:学生番号
+				 * varchar(10), primary key, not null
+				 */
+				StudentDao studentDao = new StudentDao();
+				String studentNo = rSet.getString("student_no");
+				Student student = studentDao.get(studentNo);
+				test.setStudent(student);
+				/*
+				 * subject_cd:科目コード
+				 * char(3), primary key, not null
+				 */
+				SubjectDao subjectDao = new SubjectDao();
+				String cd = rSet.getString("subject_cd");
+				Subject subject = subjectDao.get(cd, school);
+				test.setSubject(subject);
+				/*
+				 * school_cd:学校コード
+				 * char(3), primary key, not null
+				 */
+				test.setSchool(school);
+				/*
+				 * no:回数
+				 * integer(10), primary key, not null
+				 */
+				int no = rSet.getInt("no");
+				test.setNo(no);
+				/*
+				 * point:得点
+				 * intger(10), value = null
+				 */
+				int point = rSet.getInt("point");
+				test.setPoint(point);
+				/*
+				 * class_num:クラス番号
+				 * varchar(5), value = null
+				 */
+				String classNum = rSet.getString("class_num");
+				test.setClassNum(classNum);
+				list.add(test);
+			}
+		} catch (Exception e) {
+			 e.printStackTrace();
+		}
+		return list;
+	}
 	/*
 	 * filter:入学年度、クラス番号、強化、試験回数、学校を指定して学生一覧を取得
 	 */
@@ -242,6 +242,7 @@ public class TestDao extends Dao {
 			 * varchar(5), value = null
 			 */
 			test.setClassNum(classNum);
+			list.add(test);
 		}
 		return list;
 	}
@@ -328,7 +329,8 @@ public class TestDao extends Dao {
 				statement.setString(6, classNum);
 				StringBuilder printSql = new StringBuilder();
 				printSql.append("追加用SQL文:'");
-				printSql.append(sql.replaceFirst("\\?", studentNo)
+				printSql.append(sql
+						.replaceFirst("\\?", studentNo)
 						.replaceFirst("\\?", subjectCd)
 						.replaceFirst("\\?", schoolCd)
 						.replaceFirst("\\?", String.valueOf(no))
@@ -347,9 +349,10 @@ public class TestDao extends Dao {
 				statement.setString(4, schoolCd);
 				StringBuilder printSql = new StringBuilder();
 				printSql.append("更新用SQL文:'");
-				printSql.append(sql.replaceFirst("\\?", String.valueOf(no))
+				printSql.append(sql
+						.replaceFirst("\\?", String.valueOf(point))
+						.replaceFirst("\\?", String.valueOf(no))
 						.replaceFirst("\\?", studentNo)
-						.replaceFirst("\\?", subjectCd)
 						.replaceFirst("\\?", schoolCd));
 				printSql.append("'");
 				System.out.println(printSql);

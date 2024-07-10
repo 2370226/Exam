@@ -18,7 +18,7 @@ import dao.ClassNumDao;
 import dao.StudentDao;
 import tool.Action;
 
-public class StudentCreateExeciteAction extends Action {
+public class StudentCreateExecuteAction extends Action {
 	@Override
 	public void execute(
 		HttpServletRequest req,

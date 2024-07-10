@@ -7,7 +7,7 @@
 			<!-- 画面タイトル -->
 			<h2>学生情報登録</h2>
 			<!-- /画面タイトル -->
-			<form action="StudentCreateExecite.action" method="post">
+			<form action="StudentCreateExecute.action" method="post">
 				<!-- 入学年度 -->
 				<label>入学年度</label>
 				<!-- /入学年度 -->

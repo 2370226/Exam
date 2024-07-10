@@ -127,12 +127,19 @@ public class StudentDao extends Dao {
 		String classNum,
 		boolean isAttend
 	) throws Exception {
+		System.out.println("入力学校情報:");
+		String schoolCd = school.getCd();
+		school.getName();
+		System.out.println("入力入学年度:'"+entYear+"'");
+		System.out.println("入力クラス番号:'"+classNum+"'");
+		System.out.println("入力在学フラグ:'"+isAttend+"'");
 		// list:検索結果
 		List<Student> list = new ArrayList<>();
 		// データベースと接続
 		Connection connection = getConnection();
 		// SQL文を準備
 		PreparedStatement statement = null;
+		// baseSql = "select * from student where school_cd = ?"
 		String condition = " and ent_year = ? and class_num = ?";
 		String conditionIsAttend = "";
 		if (isAttend) {
@@ -145,14 +152,15 @@ public class StudentDao extends Dao {
 			// SQL文を準備
 			String sql = baseSql + condition + conditionIsAttend + order;
 			statement = connection.prepareStatement(sql);
-			String cd = school.getCd();
-			statement.setString(1, cd);
+			statement.setString(1, schoolCd);
 			statement.setInt(2, entYear);
 			statement.setString(3, classNum);
 			StringBuilder printSql = new StringBuilder();
 			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", cd)
-					.replaceFirst("\\?", String.valueOf(entYear)).replaceFirst("\\?", classNum));
+			printSql.append(sql
+					.replaceFirst("\\?", schoolCd)
+					.replaceFirst("\\?", String.valueOf(entYear))
+					.replaceFirst("\\?", classNum));
 			printSql.append("'");
 			System.out.println(printSql);
 			// 検索結果を格納
@@ -186,12 +194,18 @@ public class StudentDao extends Dao {
 			int entYear,
 			boolean isAttend
 		) throws Exception {
+		System.out.println("入力学校情報:");
+		String schoolCd = school.getCd();
+		school.getName();
+		System.out.println("入力入学年度:'"+entYear+"'");
+		System.out.println("入力在学フラグ:'"+isAttend+"'");
 		// list:検索結果
 		List<Student> list = new ArrayList<>();
 		// データベースと接続
 		Connection connection = getConnection();
 		// SQL文を準備
 		PreparedStatement statement = null;
+		// baseSql = "select * from student where school_cd = ?"
 		String condition = " and ent_year = ?";
 		String conditionIsAttend = "";
 		if (isAttend) {
@@ -202,14 +216,16 @@ public class StudentDao extends Dao {
 		ResultSet rSet;
 		try {
 			// SQL文を準備
+			// baseSql = "select * from student where school_cd = ?"
 			String sql = baseSql + condition + conditionIsAttend + order;
 			statement = connection.prepareStatement(sql);
-			String cd = school.getCd();
-			statement.setString(1, cd);
+			statement.setString(1, schoolCd);
 			statement.setInt(2, entYear);
 			StringBuilder printSql = new StringBuilder();
 			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", cd).replaceFirst("\\?", String.valueOf(entYear)));
+			printSql.append(sql
+					.replaceFirst("\\?", schoolCd)
+					.replaceFirst("\\?", String.valueOf(entYear)));
 			printSql.append("'");
 			System.out.println(printSql);
 			// 検索結果を格納
@@ -245,12 +261,14 @@ public class StudentDao extends Dao {
 		System.out.println("入力学校情報:");
 		String schoolCd = school.getCd();
 		school.getName();
+		System.out.println("入力在学フラグ:'"+isAttend+"'");
 		// list:検索結果
 		List<Student> list = new ArrayList<>();
 		// データベースと接続
 		Connection connection = getConnection();
 		// SQL文を準備
 		PreparedStatement statement = null;
+		// baseSql = "select * from student where school_cd = ?"
 		String conditionIsAttend = "";
 		if (isAttend) {
 			conditionIsAttend = " and is_attend = true";
@@ -296,30 +314,29 @@ public class StudentDao extends Dao {
 	 * 学生情報が存在する場合は更新
 	 */
 	public boolean save(Student student) throws Exception {
+		System.out.println("入力学生情報:");
+		String no = student.getNo();
+		String name = student.getName();
+		int entYear = student.getEntYear();
+		String classNum = student.getClassNum();
+		boolean isAttend = student.isAttend();
+		School school = student.getSchool();
+		// 学校コード
+		String schoolCd = school.getCd();
 		// データベースと接続
 		Connection connection = getConnection();
 		// SQL文を準備
 		PreparedStatement statement = null;
 		int count = 0;
 		try {
-			// 学生番号
-			String no = student.getNo();
-			// 学生名
-			String name = student.getName();
-			// 入学年度
-			int entYear = student.getEntYear();
-			// クラス番号
-			String classNum = student.getClassNum();
-			// 在学中フラグ
-			boolean isAttend = student.isAttend();
-			// 学校コード
-			String schoolCd = student.getSchool().getCd();
 			// old:旧学生データ
 			Student old = this.get(no);
 			String sql;
 			if (Objects.isNull(old)) {
 				// 学生データが存在しない時、情報追加SQLを作成
-				sql = "insert into student(no, name, ent_year, class_num, is_attend, school_cd) values(?, ?, ?, ?, ?, ?)";
+				sql = "insert into student"
+						+ "(no, name, ent_year, class_num, is_attend, school_cd)"
+						+ " values(?, ?, ?, ?, ?, ?)";
 				statement = connection.prepareStatement(sql);
 				// 学生番号
 				statement.setString(1, no);
@@ -335,14 +352,19 @@ public class StudentDao extends Dao {
 				statement.setString(6, schoolCd);
 				StringBuilder printSql = new StringBuilder();
 				printSql.append("追加用SQL文:'");
-				printSql.append(sql.replaceFirst("\\?", no).replaceFirst("\\?", name)
-						.replaceFirst("\\?", String.valueOf(entYear)).replaceFirst("\\?", classNum)
-						.replaceFirst("\\?", String.valueOf(isAttend)).replaceFirst("\\?", schoolCd));
+				printSql.append(sql
+						.replaceFirst("\\?", no)
+						.replaceFirst("\\?", name)
+						.replaceFirst("\\?", String.valueOf(entYear))
+						.replaceFirst("\\?", classNum)
+						.replaceFirst("\\?", String.valueOf(isAttend))
+						.replaceFirst("\\?", schoolCd));
 				printSql.append("'");
 				System.out.println(printSql);
 			} else {
 				// 学生データが存在する時、情報更新SQLを作成
-				sql = "update student set name = ?, ent_year = ?, class_num = ?, is_attend = ? where no = ?";
+				sql = "update student"
+						+ " set name = ?, ent_year = ?, class_num = ?, is_attend = ? where no = ?";
 				statement = connection.prepareStatement(sql);
 				// 学生名
 				statement.setString(1, name);
@@ -356,9 +378,12 @@ public class StudentDao extends Dao {
 				statement.setString(5, no);
 				StringBuilder printSql = new StringBuilder();
 				printSql.append("更新用SQL文:'");
-				printSql.append(sql.replaceFirst("\\?", name)
-						.replaceFirst("\\?", String.valueOf(entYear)).replaceFirst("\\?", classNum)
-						.replaceFirst("\\?", String.valueOf(isAttend)).replaceFirst("\\?", no));
+				printSql.append(sql
+						.replaceFirst("\\?", name)
+						.replaceFirst("\\?", String.valueOf(entYear))
+						.replaceFirst("\\?", classNum)
+						.replaceFirst("\\?", String.valueOf(isAttend))
+						.replaceFirst("\\?", no));
 				printSql.append("'");
 				System.out.println(printSql);
 			}

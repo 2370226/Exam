@@ -146,7 +146,7 @@
 										value="${test.point}"
 									>
 									<div>
-										${errors.get("f2")}
+										${errors.get("f2_" + test.student.no)}
 									</div>
 								</td>
 								<!-- /点数（成績情報） -->

@@ -33,6 +33,8 @@ public class TestRegistAction extends Action {
 		School school = teacher.getSchool();
 		// DAOの準備
 		SubjectDao subjectDao = new SubjectDao();
+		ClassNumDao classNumDao = new ClassNumDao();
+		TestDao testDao = new TestDao();
 		// 入学年度セレクトボックスから、検索する生徒の入学年度を取得
 		String getEntYear = req.getParameter("f1");
 		// 検索入学年度を返す
@@ -57,6 +59,7 @@ public class TestRegistAction extends Action {
 			subjectCd = getSubjectCd;
 		}
 		req.setAttribute("f3", subjectCd);
+		Subject subject = subjectDao.get(subjectCd, school);
 		// 回数セレクトボックスから、検索する試験回数を取得
 		String getNo =req.getParameter("f4");
 		// 検索試験回数を返す
@@ -74,7 +77,6 @@ public class TestRegistAction extends Action {
 		}
 		req.setAttribute("entYearSet", entYearSet);
 		// クラスセレクトボックスを設定
-		ClassNumDao classNumDao = new ClassNumDao();
 		List<String> classNumSet = classNumDao.filter(school);
 		req.setAttribute("classNumSet", classNumSet);
 		// 科目セレクトボックスを設定
@@ -99,9 +101,13 @@ public class TestRegistAction extends Action {
 				req.setAttribute("errors", errors);
 			} else {
 				// 生徒情報検索
-				TestDao testDao = new TestDao();
-				Subject subject = subjectDao.get(subjectCd, school);
 				tests = testDao.filter(entYear, classNum, subject, no, school);
+				// セッションに各情報を登録
+				session.setAttribute("entYear", entYear);
+				session.setAttribute("classNum", classNum);
+				session.setAttribute("subject", subject);
+				session.setAttribute("no", no);
+				session.setAttribute("tests", tests);
 			}
 		}
 		// 検索結果を返す
