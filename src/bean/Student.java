@@ -39,8 +39,8 @@ public class Student implements Serializable{
 		return this.entYear;
 	}
 	public void setEntYear(int entYear) {
-		System.out.println("設定入学年度:'"+this.entYear+"'");
 		this.entYear = entYear;
+		System.out.println("設定入学年度:'"+this.entYear+"'");
 	}
 	/*
 	 * class_num:クラス番号
@@ -65,8 +65,8 @@ public class Student implements Serializable{
 		return this.isAttend;
 	}
 	public void setAttend(boolean isAttend) {
-		System.out.println("設定在学中フラグ:'"+this.isAttend+"'");
 		this.isAttend = isAttend;
+		System.out.println("設定在学中フラグ:'"+this.isAttend+"'");
 	}
 	/*
 	 * school_cd:学校コード
@@ -85,5 +85,5 @@ public class Student implements Serializable{
 		this.school.getCd();
 		this.school.getName();
 	}
-	public int getSchoolYear() {}
+//	public int getSchoolYear() {}
 }

@@ -15,10 +15,6 @@ import bean.Test;
 
 public class TestDao extends Dao {
 	/*
-	 * baseSql:データ取得用のSQL
-	 */
-//	private String baseSql = "select * from test where subject_cd = ? and school_cd = ?";
-	/*
 	 * get:primary key(no)を用いたstudentテーブルの検索
 	 */
 	public Test get(
@@ -50,7 +46,8 @@ public class TestDao extends Dao {
 		try {
 			// データベースを検索
 			String sql = "select * from test"
-					+ " where student_no = ? and subject_cd = ? and school_cd = ? and no = ?";
+					+ " where student_no = ? and subject_cd = ?"
+					+ " and school_cd = ? and no = ?";
 			statement = connection.prepareStatement(sql);
 			statement.setString(1, studentNo);
 			statement.setString(2, subjectCd);

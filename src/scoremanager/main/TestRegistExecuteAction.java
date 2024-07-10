@@ -48,8 +48,9 @@ public class TestRegistExecuteAction extends Action {
 		// 点数テキストボックスから入力点数を取得
 		for (Test test : tests) {
 			String studentNo = test.getStudent().getNo();
-			int point = (int) req.getAttribute("point_" + studentNo);
-			if (Objects.nonNull(point)) {
+			String getPoint = req.getParameter("point_" + studentNo);
+			if (Objects.nonNull(getPoint)) {
+				int point = Integer.parseInt(getPoint);
 				if (point < 0 || point > 100) {
 					errors.put("f2_" + studentNo, "0～100の範囲で入力してください。");
 				} else {

@@ -94,9 +94,9 @@
 			</div>
 			<c:if test="${tests.size() > 0}">
 				<!-- 科目 -->
-				<div>科目：${f3}（${f4}回）</div>
+				<div>科目：${subject.name}（${f4}回）</div>
 				<!-- /科目 -->
-				<form action="" method="post">
+				<form action="TestRegistExecute.action" method="post">
 					<!-- 成績一覧テーブル -->
 					<table>
 						<tr>
@@ -143,7 +143,9 @@
 									<input
 										type="text"
 										name="point_${test.student.no}"
-										value="${test.point}"
+										<c:if test="${test.point != null}">
+											value="${test.point}"
+										</c:if>
 									>
 									<div>
 										${errors.get("f2_" + test.student.no)}
@@ -154,9 +156,9 @@
 						</c:forEach>
 					</table>
 					<!-- /成績一覧テーブル -->
-					<input
-						type="button"
-					>
+					<!-- 登録して終了ボタン -->
+					<button>登録して終了</button>
+					<!-- /登録して終了ボタン -->
 				</form>
 			</c:if>
 		</section>

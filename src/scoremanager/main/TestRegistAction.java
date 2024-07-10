@@ -60,6 +60,7 @@ public class TestRegistAction extends Action {
 		}
 		req.setAttribute("f3", subjectCd);
 		Subject subject = subjectDao.get(subjectCd, school);
+		req.setAttribute("subject", subject);
 		// 回数セレクトボックスから、検索する試験回数を取得
 		String getNo =req.getParameter("f4");
 		// 検索試験回数を返す
