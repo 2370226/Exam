@@ -57,18 +57,20 @@ public class TestListSubject implements Serializable {
 		System.out.println("設定クラス番号:'"+this.classNum+"'");
 	}
 	/*
+	 * no:回数
+	 * integer(10), primary key, not null
 	 * point:得点
 	 * intger(10), value = null
 	 */
 	private Map<Integer, Integer> points;
-	public Map<Integer, Integer> getPoint() {
+	public Map<Integer, Integer> getPoints() {
 		for (Integer key : this.points.keySet()) {
 			System.out.println("第"+key+"回得点:'"+this.points.get(key)+"'");
 		}
 		return this.points;
 	}
-	public void setPoint(Map<Integer, Integer> point) {
-		this.points = point;
+	public void setPoints(Map<Integer, Integer> points) {
+		this.points = points;
 		for (Integer key : this.points.keySet()) {
 			System.out.println("第"+key+"回得点:'"+this.points.get(key)+"'");
 		}

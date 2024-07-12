@@ -125,6 +125,9 @@ public class TestDao extends Dao {
 	 */
 	private List<Test> postFilter(
 		ResultSet rSet,
+		String classNum,
+		Subject subject,
+		int no,
 		School school
 	) throws Exception {
 		// list:格納リスト
@@ -144,9 +147,6 @@ public class TestDao extends Dao {
 				 * subject_cd:科目コード
 				 * char(3), primary key, not null
 				 */
-				SubjectDao subjectDao = new SubjectDao();
-				String cd = rSet.getString("subject_cd");
-				Subject subject = subjectDao.get(cd, school);
 				test.setSubject(subject);
 				/*
 				 * school_cd:学校コード
@@ -157,7 +157,6 @@ public class TestDao extends Dao {
 				 * no:回数
 				 * integer(10), primary key, not null
 				 */
-				int no = rSet.getInt("no");
 				test.setNo(no);
 				/*
 				 * point:得点
@@ -169,7 +168,6 @@ public class TestDao extends Dao {
 				 * class_num:クラス番号
 				 * varchar(5), value = null
 				 */
-				String classNum = rSet.getString("class_num");
 				test.setClassNum(classNum);
 				list.add(test);
 			}
@@ -192,54 +190,64 @@ public class TestDao extends Dao {
 		System.out.println("入力クラス番号:'"+classNum+"'");
 		System.out.println("入力科目情報:");
 		subject.getSchool();
-		subject.getCd();
+		String subjectCd = subject.getCd();
 		subject.getName();
 		System.out.println("入力試験回数:'"+no+"'");
 		System.out.println("入力学校情報:");
-		school.getCd();
+		String schoolCd = school.getCd();
 		school.getName();
 		// list:検索結果
 		List<Test> list = new ArrayList<>();
-		//
-		StudentDao studentDao = new StudentDao();
-		List<Student> students = studentDao.filter(school, entYear, classNum, true);
-		for (Student student : students) {
-			Test test = new Test();
-			/*
-			 * student_no:学生番号
-			 * varchar(10), primary key, not null
-			 */
-			test.setStudent(student);
-			/*
-			 * subject_cd:科目コード
-			 * char(3), primary key, not null
-			 */
-			test.setSubject(subject);
-			/*
-			 * school_cd:学校コード
-			 * char(3), primary key, not null
-			 */
-			test.setSchool(school);
-			/*
-			 * no:回数
-			 * integer(10), primary key, not null
-			 */
-			test.setNo(no);
-			/*
-			 * point:得点
-			 * intger(10), value = null
-			 */
-			Test old = this.get(student, subject, school, no);
-			if (Objects.nonNull(old)) {
-				int point = old.getPoint();
-				test.setPoint(point);
+		// データベースと接続
+		Connection connection = getConnection();
+		// SQL文を準備
+		PreparedStatement statement = null;
+		// rSet:検索結果
+		ResultSet rSet;
+		try {
+			// SQL文を準備
+			String sql = "select s.no as no, coalesce(t.point, 101) as point"
+					+ " from test as t right join student as s"
+					+ " on t.student_no = s.no"
+					+ " where s.ent_year = ? and s.class_num = ?"
+					+ " and t.subject_cd = ? and t.no = ? and s.school_cd = ?"
+					+ " order by s.no";
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, entYear);
+			statement.setString(2, classNum);
+			statement.setString(3, subjectCd);
+			statement.setInt(4, no);
+			statement.setString(5, schoolCd);
+			StringBuilder printSql = new StringBuilder();
+			printSql.append("検索用SQL文:'");
+			printSql.append(sql
+					.replaceFirst("\\?", schoolCd)
+					.replaceFirst("\\?", String.valueOf(entYear))
+					.replaceFirst("\\?", classNum)
+					.replaceFirst("\\?", String.valueOf(no))
+					.replaceFirst("\\?", schoolCd));
+			printSql.append("'");
+			System.out.println(printSql);
+			// 検索結果を格納
+			rSet = statement.executeQuery();
+			list = this.postFilter(rSet, classNum, subject, no, school);
+		} catch (Exception e) {
+			 throw e;
+		} finally {
+			if (Objects.nonNull(statement)) {
+				try {
+					statement.close();
+				} catch (SQLException sqlException) {
+					 throw sqlException;
+				}
 			}
-			/*
-			 * class_num:クラス番号
-			 * varchar(5), value = null
-			 */
-			test.setClassNum(classNum);
-			list.add(test);
+			if (Objects.nonNull(connection)) {
+				try {
+					connection.close();
+				} catch (SQLException sqlException) {
+					 throw sqlException;
+				}
+			}
 		}
 		return list;
 	}
@@ -369,10 +377,10 @@ public class TestDao extends Dao {
 		}
 		return count > 0;
 	}
-	public boolean delete(List<Test> list) throws Exception{
-		return true;
-	}
-	private boolean delete(Test test, Connection connection) throws Exception{
-		return true;
-	}
+//	public boolean delete(List<Test> list) throws Exception{
+//		return true;
+//	}
+//	private boolean delete(Test test, Connection connection) throws Exception{
+//		return true;
+//	}
 }

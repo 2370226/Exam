@@ -143,7 +143,7 @@
 									<input
 										type="text"
 										name="point_${test.student.no}"
-										<c:if test="${test.point != null}">
+										<c:if test="${test.point <= 100}">
 											value="${test.point}"
 										</c:if>
 									>

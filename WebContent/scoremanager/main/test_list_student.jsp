@@ -106,54 +106,44 @@
 				</div>
 				<!-- /学生情報 -->
 			</div>
+				氏名：${student.name}(${student.no})
+			<div>
+			</div>
 			<c:choose>
 				<c:when test="${test.size() > 0}">
-					<div>
-						科目：${subject.name}
-					</div>
 					<div>
 						<table>
 							<tr>
 								<!-- ヘッダー -->
-								<th>入学年度</th>
-								<th>クラス</th>
-								<th>学生番号</th>
-								<th>氏名</th>
-								<c:forEach var="no" items="${noSet}">
-									<th>${no}回</th>
-								</c:forEach>
+								<th>科目名</th>
+								<th>科目コード</th>
+								<th>回数</th>
+								<th>点数</th>
 								<!-- /ヘッダー -->
 							</tr>
 							<!-- 成績情報 -->
 							<c:forEach items="${tests}" var="test">
 								<tr>
-									<!-- 入学年度 -->
+									<!-- 科目名 -->
 									<td>
-										${f1}
+										${test.subjectName}
 									</td>
-									<!-- /入学年度 -->
-									<!-- クラス -->
+									<!-- /科目名 -->
+									<!-- 科目コード -->
 									<td>
-										${f2}
+										${test.subjectCd}
 									</td>
-									<!-- /クラス -->
-									<!-- 学生番号 -->
+									<!-- /科目コード -->
+									<!-- 回数 -->
 									<td>
-										${test.student.no}
+										${test.no}
 									</td>
-									<!-- /学生番号 -->
-									<!-- 氏名 -->
+									<!-- /回数 -->
+									<!-- 点数 -->
 									<td>
-										${test.student.name}
+										${test.point}
 									</td>
-									<!-- /氏名 -->
-									<c:forEach var="no" items="${noSet}">
-										<!-- 点数 -->
-										<td>
-											${test.points.get(no)}
-										</td>
-										<!-- /点数 -->
-									</c:forEach>
+									<!-- /点数 -->
 								</tr>
 							</c:forEach>
 							<!-- /成績情報 -->
@@ -162,7 +152,7 @@
 				</c:when>
 				<c:otherwise>
 					<div>
-						<p>学生情報が存在しませんでした</p>
+						<p>成績情報が存在しませんでした</p>
 					</div>
 				</c:otherwise>
 			</c:choose>

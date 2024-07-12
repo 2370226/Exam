@@ -97,7 +97,7 @@ public class TestRegistAction extends Action {
 				&& !subjectCd.equals("0") && no != 0) {
 			if (entYear == 0 || classNum.equals("0")
 					|| subjectCd.equals("0") || no == 0) {
-				errors.put("f1", "入学年度とクラスと科目と回数を表示してください。");
+				errors.put("f1", "入学年度とクラスと科目と回数を選択してください。");
 				// エラーを返す
 				req.setAttribute("errors", errors);
 			} else {
