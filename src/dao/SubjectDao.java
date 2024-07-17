@@ -133,6 +133,10 @@ public class SubjectDao extends Dao{
 		}
 		return list;
 	}
-	public boolean save(Subject subject) throws Exception {}
-	public boolean delete(Subject subject) throws Exception {}
+	public boolean save(Subject subject) throws Exception {
+		return true;
+	}
+	public boolean delete(Subject subject) throws Exception {
+		return true;
+	}
 }

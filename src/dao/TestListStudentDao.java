@@ -64,7 +64,7 @@ public class TestListStudentDao extends Dao {
 		return list;
 	}
 	/*
-	 * filter:入学年度、クラス番号、強化、試験回数、学校を指定して学生一覧を取得
+	 * filter:学生番号を指定して教科別成績一覧を取得
 	 */
 	public List<TestListStudent> filter(
 			Student student
@@ -76,29 +76,31 @@ public class TestListStudentDao extends Dao {
 		student.getClassNum();
 		student.isAttend();
 		School school = student.getSchool();
+		String schoolCd = school.getCd();
 		// list:検索結果
 		List<TestListStudent> list = new ArrayList<>();
 		// データベースと接続
 		Connection connection = getConnection();
 		// SQL文を準備
 		PreparedStatement statement = null;
-		// rSet:検索結果
-		ResultSet rSet;
 		try {
 			// SQL文を準備
-			String sql = "select subject_cd, no, point"
-					+ " from test"
-					+ " where student_no = ?"
+			String sql = "select subject_cd, no, point from test"
+					+ " where student_no = ? and school_cd = ?"
+					+ " and point is not null"
 					+ " order by subject_cd, no";
 			statement = connection.prepareStatement(sql);
 			statement.setString(1, studentNo);
+			statement.setString(2, schoolCd);
 			StringBuilder printSql = new StringBuilder();
 			printSql.append("検索用SQL文:'");
-			printSql.append(sql.replaceFirst("\\?", studentNo));
+			printSql.append(sql
+					.replaceFirst("\\?", studentNo)
+					.replaceFirst("\\?", schoolCd));
 			printSql.append("'");
 			System.out.println(printSql);
 			// 検索結果を格納
-			rSet = statement.executeQuery();
+			ResultSet rSet = statement.executeQuery();
 			list = this.postFilter(rSet, school);
 		} catch (Exception e) {
 			 throw e;

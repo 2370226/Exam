@@ -130,12 +130,12 @@ public class TestListSubjectDao extends Dao {
 		ResultSet rSet;
 		try {
 			// SQL文を準備
-			String sql = "select t.student_no as student_no, t.no as no, t.point as point"
+			String sql = "select t.student_no as student_no, t.no as no, coalesce(t.point,101) as point"
 					+ " from test as t join student as s"
 					+ " on t.student_no = s.no"
 					+ " where s.ent_year = ? and s.class_num = ?"
 					+ " and t.subject_cd = ? and t.school_cd = ?"
-					+ " order by t.student_no, t.no";
+					+ " order by t.student_no, t.no;";
 			statement = connection.prepareStatement(sql);
 			statement.setInt(1, entYear);
 			statement.setString(2, classNum);

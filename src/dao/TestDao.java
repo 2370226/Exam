@@ -140,7 +140,7 @@ public class TestDao extends Dao {
 				 * varchar(10), primary key, not null
 				 */
 				StudentDao studentDao = new StudentDao();
-				String studentNo = rSet.getString("student_no");
+				String studentNo = rSet.getString("no");
 				Student student = studentDao.get(studentNo);
 				test.setStudent(student);
 				/*
@@ -207,24 +207,24 @@ public class TestDao extends Dao {
 		try {
 			// SQL文を準備
 			String sql = "select s.no as no, coalesce(t.point, 101) as point"
-					+ " from test as t right join student as s"
+					+ " from (select * from test where subject_cd = ? and no = ?) as t"
+					+ " right join student as s"
 					+ " on t.student_no = s.no"
-					+ " where s.ent_year = ? and s.class_num = ?"
-					+ " and t.subject_cd = ? and t.no = ? and s.school_cd = ?"
-					+ " order by s.no";
+					+ " where s.ent_year = ? and s.class_num = ? and s.school_cd = ?"
+					+ " order by no;";
 			statement = connection.prepareStatement(sql);
-			statement.setInt(1, entYear);
-			statement.setString(2, classNum);
-			statement.setString(3, subjectCd);
-			statement.setInt(4, no);
+			statement.setString(1, subjectCd);
+			statement.setInt(2, no);
+			statement.setInt(3, entYear);
+			statement.setString(4, classNum);
 			statement.setString(5, schoolCd);
 			StringBuilder printSql = new StringBuilder();
 			printSql.append("検索用SQL文:'");
 			printSql.append(sql
-					.replaceFirst("\\?", schoolCd)
+					.replaceFirst("\\?", subjectCd)
+					.replaceFirst("\\?", String.valueOf(no))
 					.replaceFirst("\\?", String.valueOf(entYear))
 					.replaceFirst("\\?", classNum)
-					.replaceFirst("\\?", String.valueOf(no))
 					.replaceFirst("\\?", schoolCd));
 			printSql.append("'");
 			System.out.println(printSql);
@@ -346,19 +346,21 @@ public class TestDao extends Dao {
 			} else {
 				// 学生データが存在する時、情報更新SQLを作成
 				sql = "update test set point = ?"
-						+ " where student_no = ? and subject_cd = ? and school_cd = ?";
+						+ " where student_no = ? and subject_cd = ? and school_cd = ? and no = ?";
 				statement = connection.prepareStatement(sql);
 				statement.setInt(1, point);
 				statement.setString(2, studentNo);
 				statement.setString(3, subjectCd);
 				statement.setString(4, schoolCd);
+				statement.setInt(5, no);
 				StringBuilder printSql = new StringBuilder();
 				printSql.append("更新用SQL文:'");
 				printSql.append(sql
 						.replaceFirst("\\?", String.valueOf(point))
-						.replaceFirst("\\?", String.valueOf(no))
 						.replaceFirst("\\?", studentNo)
-						.replaceFirst("\\?", schoolCd));
+						.replaceFirst("\\?", subjectCd)
+						.replaceFirst("\\?", schoolCd)
+						.replaceFirst("\\?", String.valueOf(no)));
 				printSql.append("'");
 				System.out.println(printSql);
 			}

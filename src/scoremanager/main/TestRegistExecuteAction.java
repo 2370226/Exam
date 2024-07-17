@@ -43,18 +43,21 @@ public class TestRegistExecuteAction extends Action {
 		SubjectDao subjectDao = new SubjectDao();
 		ClassNumDao classNumDao = new ClassNumDao();
 		TestDao testDao = new TestDao();
+		// list:保存用リスト
+		List<Test> list = new ArrayList<>();
 		// errors:エラー一覧
 		Map<String, String> errors = new HashMap<String, String>();
 		// 点数テキストボックスから入力点数を取得
 		for (Test test : tests) {
 			String studentNo = test.getStudent().getNo();
 			String getPoint = req.getParameter("point_" + studentNo);
-			if (Objects.nonNull(getPoint)) {
+			if (Objects.nonNull(getPoint) && !getPoint.equals("")) {
 				int point = Integer.parseInt(getPoint);
 				if (point < 0 || point > 100) {
 					errors.put("f2_" + studentNo, "0～100の範囲で入力してください。");
 				} else {
 					test.setPoint(point);
+					list.add(test);
 				}
 			}
 		}
@@ -91,7 +94,7 @@ public class TestRegistExecuteAction extends Action {
 			System.out.println("★ file name -> /scoremanager/main/test_regist.jsp");
 			req.getRequestDispatcher("test_regist.jsp").forward(req, res);
 		} else {
-			testDao.save(tests);
+			testDao.save(list);
 			session.removeAttribute("entYear");
 			session.removeAttribute("classNum");
 			session.removeAttribute("subject");

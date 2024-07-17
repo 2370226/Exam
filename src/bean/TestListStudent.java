@@ -39,8 +39,8 @@ public class TestListStudent implements Serializable {
 		return this.no;
 	}
 	public void setNo(int no) {
-		System.out.println("設定回数:'"+this.no+"'");
 		this.no = no;
+		System.out.println("設定回数:'"+this.no+"'");
 	}
 	/*
 	 * point:得点
@@ -52,7 +52,7 @@ public class TestListStudent implements Serializable {
 		return this.point;
 	}
 	public void setPoint(int point) {
-		System.out.println("設定得点:'"+this.point+"'");
 		this.point = point;
+		System.out.println("設定得点:'"+this.point+"'");
 	}
 }

@@ -14,8 +14,8 @@ public class TestListSubject implements Serializable {
 		return this.entYear;
 	}
 	public void setEntYear(int entYear) {
-		System.out.println("設定入学年度:'"+this.entYear+"'");
 		this.entYear = entYear;
+		System.out.println("設定入学年度:'"+this.entYear+"'");
 	}
 	/*
 	 * student_no:学生番号

@@ -107,7 +107,7 @@
 				<!-- /学生情報 -->
 			</div>
 			<c:choose>
-				<c:when test="${test.size() > 0}">
+				<c:when test="${tests.size() > 0}">
 					<div>
 						科目：${subject.name}
 					</div>
@@ -139,18 +139,25 @@
 									<!-- /クラス -->
 									<!-- 学生番号 -->
 									<td>
-										${test.student.no}
+										${test.studentNo}
 									</td>
 									<!-- /学生番号 -->
 									<!-- 氏名 -->
 									<td>
-										${test.student.name}
+										${test.studentName}
 									</td>
 									<!-- /氏名 -->
 									<c:forEach var="no" items="${noSet}">
 										<!-- 点数 -->
 										<td>
-											${test.points.get(no)}
+											<c:choose>
+												<c:when test="${test.points.get(no) <= 100}">
+													${test.points.get(no)}
+												</c:when>
+												<c:otherwise>
+													-
+												</c:otherwise>
+											</c:choose>
 										</td>
 										<!-- /点数 -->
 									</c:forEach>

@@ -110,7 +110,7 @@
 			<div>
 			</div>
 			<c:choose>
-				<c:when test="${test.size() > 0}">
+				<c:when test="${tests.size() > 0}">
 					<div>
 						<table>
 							<tr>
